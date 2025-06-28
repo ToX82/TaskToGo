@@ -22,7 +22,11 @@
     "pending": "In sospeso",
     "overdue": "Scaduto",
     "dueToday": "Scade oggi",
-    "dueTomorrow": "Scade domani"
+    "dueTomorrow": "Scade domani",
+    "images": "Immagini",
+    "addImage": "Aggiungi Immagine",
+    "viewImage": "Visualizza Immagine",
+    "pasteImageHint": "Oppure incolla immagine dagli appunti"
   },
   "category": {
     "name": "Nome categoria",
@@ -100,6 +104,11 @@
     "fillRequired": "Compila tutti i campi obbligatori",
     "confirmDeleteTask": "Sei sicuro di voler eliminare questo task?",
     "confirmDelete": "Sei sicuro di voler eliminare questo elemento?",
-    "success": "Operazione completata con successo"
+    "success": "Operazione completata con successo",
+    "imageRemoved": "Immagine rimossa con successo",
+    "imagePasted": "Immagine incollata con successo",
+    "imagesAdded": "Immagini aggiunte con successo",
+    "imageError": "Errore nell'elaborazione dell'immagine",
+    "importFailed": "Importazione fallita"
   }
 }

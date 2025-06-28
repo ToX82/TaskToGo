@@ -115,6 +115,15 @@ class UI {
                 const taskId = $(e.currentTarget).closest('.task-item').data('task-id');
                 if (taskId) this.deleteTask(taskId);
             });
+
+        // Remove image button
+        $taskList.off('click', '.remove-image-btn')
+            .on('click', '.remove-image-btn', (e) => {
+                e.stopPropagation();
+                const taskId = $(e.currentTarget).data('task-id');
+                const imageId = $(e.currentTarget).data('image-id');
+                if (taskId && imageId) this.removeTaskImage(taskId, imageId);
+            });
     }
 
     rotateTheme() {
@@ -232,7 +241,7 @@ class UI {
         const categoryBadge = category ?
             `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white" style="background-color: ${category.color}">
                 <iconify-icon icon="mdi:tag-outline" class="text-xs mr-0.5"></iconify-icon>
-                ${this.escapeHtml(category.name)}
+                ${utils.escapeHtml(category.name)}
             </span>` : '';
 
         const taskHtml = `
@@ -241,7 +250,7 @@ class UI {
                     <input type="checkbox" class="custom-checkbox w-4 h-4 mt-0.5 border-2 border-gray-300 dark:border-gray-500 rounded focus-ring" ${task.completed ? 'checked' : ''}>
                     <div class="flex-1 min-w-0">
                         <div class="flex justify-between items-start mb-1">
-                            <h3 class="font-medium text-sm text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''} leading-tight">${this.escapeHtml(task.title)}</h3>
+                            <h3 class="font-medium text-sm text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''} leading-tight">${utils.escapeHtml(task.title)}</h3>
                             <div class="task-actions flex items-center space-x-0.5 ml-2">
                                 <button class="edit-task-btn p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
                                     <iconify-icon icon="mdi:pencil-outline" class="text-xs"></iconify-icon>
@@ -251,7 +260,8 @@ class UI {
                                 </button>
                             </div>
                         </div>
-                        ${task.description ? `<p class="text-xs text-gray-600 dark:text-gray-400 mb-1.5 leading-relaxed">${this.escapeHtml(task.description)}</p>` : ''}
+                        ${task.description ? `<p class="text-xs text-gray-600 dark:text-gray-400 mb-1.5 leading-relaxed">${utils.autoLinkUrls(utils.escapeHtml(task.description))}</p>` : ''}
+                        ${this.renderTaskImages(task)}
                         <div class="flex items-center gap-1.5 flex-wrap">
                             ${dueDate}
                             ${categoryBadge}
@@ -262,6 +272,62 @@ class UI {
 
         const $task = $(taskHtml);
         return $task;
+    }
+
+    /**
+     * Renderizza le immagini di un task
+     */
+    renderTaskImages(task) {
+        const images = task.getImages ? task.getImages() : (task.images || []);
+        if (!images.length) return '';
+
+        const imageElements = images.map(img => {
+            const imageData = typeof img === 'string' ? img : img.data;
+            const imageId = typeof img === 'object' ? img.id : utils.generateId();
+
+            return `
+                <div class="task-image-container relative inline-block mr-2 mb-2">
+                    <img src="${imageData}"
+                         class="task-image max-w-24 max-h-24 object-cover rounded border border-gray-200 dark:border-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+                         data-image-id="${imageId}"
+                         onclick="ui.showImageModal('${imageData}')">
+                    <button class="remove-image-btn absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center transition-colors"
+                            data-task-id="${task.id}"
+                            data-image-id="${imageId}"
+                            title="Rimuovi immagine">
+                        <iconify-icon icon="mdi:close" class="text-xs"></iconify-icon>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        return images.length > 0 ? `<div class="task-images mb-2">${imageElements}</div>` : '';
+    }
+
+    /**
+     * Renderizza le immagini nel modal di modifica task
+     */
+    renderTaskModalImages(task) {
+        if (!task || !task.images || !task.images.length) {
+            return '<span class="text-gray-400 dark:text-gray-500 text-sm italic">No images</span>';
+        }
+
+        const images = task.getImages ? task.getImages() : task.images;
+        return images.map(img => {
+            const imageData = typeof img === 'string' ? img : img.data;
+            const imageId = typeof img === 'object' ? img.id : utils.generateId();
+
+            return `
+                <div class="modal-image-container relative inline-block">
+                    <img src="${imageData}"
+                         class="w-16 h-16 object-cover rounded border border-gray-200 dark:border-gray-600">
+                    <button type="button" class="remove-modal-image-btn absolute -top-1 -right-1 w-4 h-4 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center"
+                            data-image-id="${imageId}">
+                        <iconify-icon icon="mdi:close" class="text-xs"></iconify-icon>
+                    </button>
+                </div>
+            `;
+        }).join('');
     }
 
     /**
@@ -336,25 +402,28 @@ class UI {
     showTaskModal(task = null) {
         const title = i18n.t(task ? 'task.editTask' : 'task.addNew');
         const categories = storage.getCategories().map(c =>
-            `<option value="${c.id}" ${task?.categoryId === c.id ? 'selected' : ''}>${this.escapeHtml(c.name)}</option>`
+            `<option value="${c.id}" ${task?.categoryId === c.id ? 'selected' : ''}>${utils.escapeHtml(c.name)}</option>`
         ).join('');
         const priorities = storage.getPriorities().sort((a,b) => a.order - b.order).map(p =>
-            `<option value="${p.id}" ${task?.priorityId === p.id ? 'selected' : ''}>${this.escapeHtml(p.name)}</option>`
+            `<option value="${p.id}" ${task?.priorityId === p.id ? 'selected' : ''}>${utils.escapeHtml(p.name)}</option>`
         ).join('');
 
+        const hasImages = task?.images && task.images.length > 0;
+        const imageSectionHiddenClass = hasImages ? '' : 'hidden';
+
         const bodyHtml = `
-            <div class="space-y-4">
+            <div class="space-y-3 pr-1">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('task.title')}</label>
                     <input type="text" id="taskTitle" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                           value="${this.escapeHtml(task?.title || '')}" placeholder="${i18n.t('task.title')}">
+                           value="${utils.escapeHtml(task?.title || '')}" placeholder="${i18n.t('task.title')}">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('task.description')}</label>
-                    <textarea id="taskDescription" rows="3" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                              placeholder="${i18n.t('task.description')}">${this.escapeHtml(task?.description || '')}</textarea>
+                    <textarea id="taskDescription" rows="5" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                              placeholder="${i18n.t('task.description')}">${utils.escapeHtml(task?.description || '')}</textarea>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('task.category')}</label>
                         <select id="taskCategory" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100">
@@ -367,11 +436,29 @@ class UI {
                             ${priorities}
                         </select>
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('task.dueDate')}</label>
+                        <input type="date" id="taskDueDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
+                               value="${task?.dueDate || ''}">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('task.dueDate')}</label>
-                    <input type="date" id="taskDueDate" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100"
-                           value="${task?.dueDate || ''}">
+                <div id="imageSection" class="${imageSectionHiddenClass}">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">${i18n.t('task.images') || 'Images'}</label>
+                    <div class="space-y-2">
+                        <div id="taskImages" class="flex flex-wrap gap-2 min-h-12 p-2 border-2 border-dashed border-gray-300 dark:border-gray-500 rounded-lg">
+                            ${this.renderTaskModalImages(task)}
+                        </div>
+                        <div class="flex gap-2 flex-wrap">
+                            <button type="button" id="addImageBtn" class="flex items-center space-x-2 px-3 py-2 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors text-sm">
+                                <iconify-icon icon="mdi:image-plus"></iconify-icon>
+                                <span>${i18n.t('task.addImage') || 'Add Image'}</span>
+                            </button>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 self-center">${i18n.t('task.pasteImageHint') || 'Or paste image from clipboard'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="showImagesToggle" class="${imageSectionHiddenClass ? 'block' : 'hidden'}">
+                    <button type="button" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">${i18n.t('task.addImage') || 'Add Image'}</button>
                 </div>
             </div>
         `;
@@ -392,11 +479,26 @@ class UI {
         $modal.find('.save-btn').on('click', () => { this.saveTask(task, closeModal, $modal); });
         $modal.find('.cancel-btn').on('click', closeModal);
 
+        // Setup image handling
+        this.setupTaskModalImageHandling($modal, task);
+
+        // Toggle sezione immagini
+        $modal.find('#showImagesToggle button').on('click', () => {
+            $modal.find('#imageSection').removeClass('hidden');
+            $modal.find('#showImagesToggle').addClass('hidden');
+        });
+
+        // Rendo body scrollabile
+        $modal.find('.modal-body').addClass('overflow-y-auto max-h-[75vh] pr-1');
+        // Espando larghezza modal per layout 3 colonne
+        $modal.find('.max-w-md').removeClass('max-w-md').addClass('sm:max-w-2xl');
+
         // Focus on title input
         setTimeout(() => $modal.find('#taskTitle').focus(), 100);
     }
 
     saveTask(task, closeModal, $modal) {
+        const tempImages = $modal.data('tempImages') || [];
         const taskData = {
             id: task?.id,
             title: $modal.find('#taskTitle').val().trim(),
@@ -404,6 +506,7 @@ class UI {
             categoryId: $modal.find('#taskCategory').val(),
             priorityId: $modal.find('#taskPriority').val(),
             dueDate: $modal.find('#taskDueDate').val(),
+            images: tempImages,
             completed: task?.completed || false,
         };
 
@@ -513,7 +616,7 @@ class UI {
      */
     loadCategories() {
         const categories = storage.getCategories();
-        const options = categories.map(c => `<option value="${c.id}">${this.escapeHtml(c.name)}</option>`).join('');
+        const options = categories.map(c => `<option value="${c.id}">${utils.escapeHtml(c.name)}</option>`).join('');
         $('#categoryFilter').find('option:not(:first)').remove().end().append(options);
     }
 
@@ -522,7 +625,7 @@ class UI {
      */
     loadPriorities() {
         const priorities = storage.getPriorities().sort((a,b) => a.order - b.order);
-        const options = priorities.map(p => `<option value="${p.id}">${this.escapeHtml(p.name)}</option>`).join('');
+        const options = priorities.map(p => `<option value="${p.id}">${utils.escapeHtml(p.name)}</option>`).join('');
         $('#priorityFilter').find('option:not(:first)').remove().end().append(options);
     }
 
@@ -573,7 +676,7 @@ class UI {
         const $notification = $(`
             <div class="notification-toast ${config.bg} border ${config.border} ${config.text} px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2">
                 <iconify-icon icon="${config.icon}" class="text-lg flex-shrink-0"></iconify-icon>
-                <span class="font-medium">${this.escapeHtml(message)}</span>
+                <span class="font-medium">${utils.escapeHtml(message)}</span>
                 <button class="ml-2 hover:bg-black hover:bg-opacity-10 p-1 rounded">
                     <iconify-icon icon="mdi:close" class="text-sm"></iconify-icon>
                 </button>
@@ -598,10 +701,38 @@ class UI {
     }
 
     /**
-     * Escape HTML special characters
+     * Rimuovi un'immagine da un task
      */
-    escapeHtml(text) {
-        return text ? $('<div>').text(text).html() : '';
+    removeTaskImage(taskId, imageId) {
+        const task = storage.getTask(taskId);
+        if (!task) return;
+
+        const taskInstance = Task.fromObject(task);
+        taskInstance.removeImage(imageId);
+
+        taskService.update(taskId, taskInstance.toObject());
+        this.renderTasks();
+        this.showNotification(i18n.t('messages.imageRemoved') || 'Image removed', 'success');
+    }
+
+    /**
+     * Mostra modal per visualizzare un'immagine a schermo intero
+     */
+    showImageModal(imageSrc) {
+        const bodyHtml = `
+            <div class="text-center">
+                <img src="${imageSrc}" class="max-w-full max-h-96 mx-auto rounded-lg shadow-lg">
+            </div>
+        `;
+
+        const footerHtml = `
+            <button class="close-btn w-full px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors">
+                ${i18n.t('common.close')}
+            </button>
+        `;
+
+        const { $modal, closeModal } = this.showModal(i18n.t('task.viewImage') || 'View Image', bodyHtml, footerHtml);
+        $modal.find('.close-btn').on('click', closeModal);
     }
 
     /**
@@ -613,7 +744,7 @@ class UI {
             <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
                 <div class="flex items-center gap-3">
                     <span class="w-5 h-5 rounded-full border" style="background-color: ${c.color};"></span>
-                    <span class="font-medium text-gray-800 dark:text-gray-100">${this.escapeHtml(c.name)}</span>
+                    <span class="font-medium text-gray-800 dark:text-gray-100">${utils.escapeHtml(c.name)}</span>
                 </div>
                 <div class="flex items-center gap-1">
                     <button class="edit-category-btn p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors" data-id="${c.id}">
@@ -677,7 +808,7 @@ class UI {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('category.name') || 'Name'}</label>
-                    <input type="text" id="categoryName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${this.escapeHtml(category?.name || '')}" placeholder="Category name">
+                    <input type="text" id="categoryName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${utils.escapeHtml(category?.name || '')}" placeholder="Category name">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('category.color') || 'Color'}</label>
@@ -729,7 +860,7 @@ class UI {
             <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
                 <div class="flex items-center gap-3">
                     <span class="w-5 h-5 rounded-full border" style="background-color: ${p.color};"></span>
-                    <span class="font-medium text-gray-800 dark:text-gray-100">${this.escapeHtml(p.name)}</span>
+                    <span class="font-medium text-gray-800 dark:text-gray-100">${utils.escapeHtml(p.name)}</span>
                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">#${p.order}</span>
                 </div>
                 <div class="flex items-center gap-1">
@@ -794,7 +925,7 @@ class UI {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('priority.name') || 'Name'}</label>
-                    <input type="text" id="priorityName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${this.escapeHtml(priority?.name || '')}" placeholder="Priority name">
+                    <input type="text" id="priorityName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${utils.escapeHtml(priority?.name || '')}" placeholder="Priority name">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -843,9 +974,176 @@ class UI {
         });
         setTimeout(() => $modal.find('#priorityName').focus(), 100);
     }
+
+    /**
+     * Configura la gestione delle immagini nel modal del task
+     */
+    setupTaskModalImageHandling($modal, task) {
+        // Array per tenere traccia delle immagini temporanee
+        $modal.data('tempImages', []);
+
+        // Copia le immagini esistenti nell'array temporaneo
+        if (task && task.images) {
+            const existingImages = task.getImages ? task.getImages() : task.images;
+            $modal.data('tempImages', [...existingImages]);
+        }
+
+        // Gestore per il pulsante "Add Image"
+        $modal.find('#addImageBtn').on('click', () => {
+            const $fileInput = $('<input type="file" accept="image/*" multiple class="hidden">');
+            $('body').append($fileInput);
+
+            $fileInput.on('change', async (e) => {
+                const files = Array.from(e.target.files);
+                for (const file of files) {
+                    try {
+                        const base64 = await utils.fileToBase64(file);
+                        const resized = await utils.resizeBase64Image(base64);
+                        this.addImageToModal($modal, resized);
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        this.showNotification(i18n.t('messages.imageError') || 'Error processing image', 'error');
+                    }
+                }
+                $fileInput.remove();
+            });
+
+            $fileInput.trigger('click');
+        });
+
+        // Gestore per rimuovere immagini dal modal
+        $modal.off('click', '.remove-modal-image-btn')
+            .on('click', '.remove-modal-image-btn', (e) => {
+                const imageId = $(e.currentTarget).data('image-id');
+                this.removeImageFromModal($modal, imageId);
+            });
+
+        // Gestore per paste di immagini
+        $modal.on('paste', async (e) => {
+            const items = e.originalEvent.clipboardData?.items;
+            if (!items) return;
+
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    if (file) {
+                        try {
+                            const base64 = await utils.fileToBase64(file);
+                            const resized = await utils.resizeBase64Image(base64);
+                            this.addImageToModal($modal, resized);
+                            this.showNotification(i18n.t('messages.imagePasted') || 'Image pasted', 'success');
+                        } catch (error) {
+                            console.error('Error pasting image:', error);
+                            this.showNotification(i18n.t('messages.imageError') || 'Error processing image', 'error');
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gestore per drag and drop di immagini
+        const $dropZone = $modal.find('#taskImages');
+
+        $dropZone.on('dragover', (e) => {
+            e.preventDefault();
+            $dropZone.addClass('drag-over');
+        });
+
+        $dropZone.on('dragleave', (e) => {
+            e.preventDefault();
+            if (!$dropZone[0].contains(e.relatedTarget)) {
+                $dropZone.removeClass('drag-over');
+            }
+        });
+
+        $dropZone.on('drop', async (e) => {
+            e.preventDefault();
+            $dropZone.removeClass('drag-over');
+
+            const files = Array.from(e.originalEvent.dataTransfer.files);
+            const imageFiles = files.filter(file => file.type.startsWith('image/'));
+
+            for (const file of imageFiles) {
+                try {
+                    const base64 = await utils.fileToBase64(file);
+                    const resized = await utils.resizeBase64Image(base64);
+                    this.addImageToModal($modal, resized);
+                } catch (error) {
+                    console.error('Error processing dropped image:', error);
+                    this.showNotification(i18n.t('messages.imageError') || 'Error processing image', 'error');
+                }
+            }
+
+            if (imageFiles.length > 0) {
+                this.showNotification(i18n.t('messages.imagesAdded') || 'Images added successfully', 'success');
+            }
+        });
+    }
+
+    /**
+     * Aggiungi un'immagine al modal
+     */
+    addImageToModal($modal, imageData) {
+        const tempImages = $modal.data('tempImages') || [];
+        const imageObj = {
+            id: utils.generateId(),
+            data: imageData,
+            type: imageData.match(/data:image\/([^;]+)/)?.[1] || 'unknown',
+            addedAt: utils.nowISO()
+        };
+
+        tempImages.push(imageObj);
+        $modal.data('tempImages', tempImages);
+
+        this.updateModalImagesDisplay($modal);
+    }
+
+    /**
+     * Rimuovi un'immagine dal modal
+     */
+    removeImageFromModal($modal, imageId) {
+        const tempImages = $modal.data('tempImages') || [];
+        const filteredImages = tempImages.filter(img => img.id !== imageId);
+        $modal.data('tempImages', filteredImages);
+
+        this.updateModalImagesDisplay($modal);
+    }
+
+    /**
+     * Aggiorna la visualizzazione delle immagini nel modal
+     */
+    updateModalImagesDisplay($modal) {
+        const tempImages = $modal.data('tempImages') || [];
+        const $container = $modal.find('#taskImages');
+
+        if (tempImages.length === 0) {
+            $container.html('<span class="text-gray-400 dark:text-gray-500 text-sm italic">No images</span>');
+            $modal.find('#imageSection').addClass('hidden');
+            $modal.find('#showImagesToggle').removeClass('hidden');
+            return;
+        }
+
+        $modal.find('#imageSection').removeClass('hidden');
+        $modal.find('#showImagesToggle').addClass('hidden');
+
+        const imageElements = tempImages.map(img => {
+            return `
+                <div class="modal-image-container relative inline-block">
+                    <img src="${img.data}" class="w-16 h-16 object-cover rounded border border-gray-200 dark:border-gray-600">
+                    <button type="button" class="remove-modal-image-btn absolute -top-1 -right-1 w-4 h-4 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center" data-image-id="${img.id}">
+                        <iconify-icon icon="mdi:close" class="text-xs"></iconify-icon>
+                    </button>
+                </div>`;
+        }).join('');
+
+        $container.html(imageElements);
+
+        // Re-scan icons
+        if (window.Iconify) window.Iconify.scan($container[0]);
+    }
 }
 
 // Initialize UI
 const ui = new UI();
-// Note: app.js will call ui.init()
 // Note: app.js will call ui.init()

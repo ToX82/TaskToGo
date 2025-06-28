@@ -22,7 +22,11 @@
     "pending": "Pending",
     "overdue": "Overdue",
     "dueToday": "Due today",
-    "dueTomorrow": "Due tomorrow"
+    "dueTomorrow": "Due tomorrow",
+    "images": "Images",
+    "addImage": "Add Image",
+    "viewImage": "View Image",
+    "pasteImageHint": "Or paste image from clipboard"
   },
   "category": {
     "name": "Category name",
@@ -100,6 +104,11 @@
     "fillRequired": "Please fill in all required fields",
     "confirmDeleteTask": "Are you sure you want to delete this task?",
     "confirmDelete": "Are you sure you want to delete this item?",
-    "success": "Operation completed successfully"
+    "success": "Operation completed successfully",
+    "imageRemoved": "Image removed successfully",
+    "imagePasted": "Image pasted successfully",
+    "imagesAdded": "Images added successfully",
+    "imageError": "Error processing image",
+    "importFailed": "Import failed"
   }
 }

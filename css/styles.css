@@ -209,3 +209,77 @@ html.dark {
 .dark ::-webkit-scrollbar-thumb:hover {
     background: rgba(107, 114, 128, 0.7);
 }
+
+/* 8. Task Images - Modern Gallery Style
+------------------------------------ */
+.task-image-container {
+    transition: all 0.2s ease-in-out;
+}
+
+.task-image-container:hover {
+    transform: scale(1.05);
+}
+
+.task-image {
+    transition: all 0.2s ease-in-out;
+}
+
+.task-image:hover {
+    filter: brightness(1.1);
+}
+
+.remove-image-btn {
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    transform: scale(0.8);
+}
+
+.task-image-container:hover .remove-image-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.remove-image-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 9. Modal Images - Preview Style
+------------------------------------ */
+.modal-image-container {
+    transition: all 0.2s ease-in-out;
+}
+
+.modal-image-container:hover {
+    transform: scale(1.05);
+}
+
+.remove-modal-image-btn {
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    transform: scale(0.8);
+}
+
+.modal-image-container:hover .remove-modal-image-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.remove-modal-image-btn:hover {
+    transform: scale(1.1);
+}
+
+/* 10. Image Drop Zone - Drag and Drop Style
+------------------------------------ */
+#taskImages {
+    transition: all 0.2s ease-in-out;
+}
+
+#taskImages.drag-over {
+    border-color: var(--color-primary);
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+.dark #taskImages.drag-over {
+    border-color: #60a5fa;
+    background-color: rgba(96, 165, 250, 0.1);
+}

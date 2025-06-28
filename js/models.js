@@ -14,6 +14,7 @@ class Task {
         this.priorityId = data.priorityId || null;
         this.completed = data.completed || false;
         this.dueDate = data.dueDate || null;
+        this.images = data.images || []; // Array di immagini base64
         this.createdAt = data.createdAt || null;
         this.updatedAt = data.updatedAt || null;
         this.completedAt = data.completedAt || null;
@@ -39,6 +40,23 @@ class Task {
 
         if (this.dueDate && !this.isValidDate(this.dueDate)) {
             errors.push('Invalid due date');
+        }
+
+        // Valida le immagini se presenti
+        if (this.images && Array.isArray(this.images)) {
+            for (const image of this.images) {
+                if (typeof image === 'string') {
+                    if (!utils.isValidBase64Image(image)) {
+                        errors.push('Invalid image format');
+                        break;
+                    }
+                } else if (image && typeof image === 'object') {
+                    if (!image.data || !utils.isValidBase64Image(image.data)) {
+                        errors.push('Invalid image format');
+                        break;
+                    }
+                }
+            }
         }
 
         return {
@@ -124,6 +142,59 @@ class Task {
     }
 
     /**
+     * Aggiungi un'immagine al task
+     * @param {string} imageData - Immagine in formato base64
+     * @param {string} type - Tipo di immagine (opzionale)
+     */
+    addImage(imageData, type = null) {
+        if (!utils.isValidBase64Image(imageData)) {
+            throw new Error('Invalid image format');
+        }
+
+        const imageObj = {
+            id: utils.generateId(),
+            data: imageData,
+            type: type || imageData.match(/data:image\/([^;]+)/)?.[1] || 'unknown',
+            addedAt: utils.nowISO()
+        };
+
+        this.images = this.images || [];
+        this.images.push(imageObj);
+        this.updatedAt = utils.nowISO();
+    }
+
+    /**
+     * Rimuovi un'immagine dal task
+     * @param {string} imageId - ID dell'immagine da rimuovere
+     */
+    removeImage(imageId) {
+        if (!this.images) return;
+        this.images = this.images.filter(img =>
+            (typeof img === 'object' ? img.id : img) !== imageId
+        );
+        this.updatedAt = utils.nowISO();
+    }
+
+    /**
+     * Ottieni le immagini del task in formato standard
+     * @returns {Array} Array di oggetti immagine
+     */
+    getImages() {
+        if (!this.images || !Array.isArray(this.images)) return [];
+
+        return this.images.map(img => {
+            if (typeof img === 'string') {
+                return {
+                    id: utils.generateId(),
+                    data: img,
+                    type: img.match(/data:image\/([^;]+)/)?.[1] || 'unknown'
+                };
+            }
+            return img;
+        });
+    }
+
+    /**
      * Convert to plain object
      */
     toObject() {
@@ -135,6 +206,7 @@ class Task {
             priorityId: this.priorityId,
             completed: this.completed,
             dueDate: this.dueDate,
+            images: this.images,
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             completedAt: this.completedAt
