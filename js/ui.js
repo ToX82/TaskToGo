@@ -366,6 +366,40 @@ class UI {
         $modal.find('#manageCategoriesBtn').on('click', () => { closeModal(); this.showCategoryManager(); });
         $modal.find('#managePrioritiesBtn').on('click', () => { closeModal(); this.showPriorityManager(); });
         // Bind settings actions here
+
+        // 1. Export data
+        $modal.find('#exportBtn').on('click', () => {
+            app.exportData();
+        });
+
+        // 2. Import data (via hidden file input)
+        const $fileInput = $('<input type="file" accept="application/json" class="hidden">');
+        $('body').append($fileInput);
+
+        $modal.find('#importBtn').on('click', () => {
+            $fileInput.val(''); // reset previous selection
+            $fileInput.one('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                app.importData(file)
+                    .then(() => {
+                        closeModal();
+                        $fileInput.remove();
+                    })
+                    .catch((err) => {
+                        console.error('Import failed:', err);
+                        ui.showNotification(i18n.t('messages.importFailed') || 'Failed to import', 'error');
+                        $fileInput.remove();
+                    });
+            });
+            $fileInput.trigger('click');
+        });
+
+        // 3. Reset all data
+        $modal.find('#resetBtn').on('click', () => {
+            closeModal();
+            app.resetAllData();
+        });
     }
 
     /**
