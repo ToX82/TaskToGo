@@ -331,6 +331,14 @@ class UI {
                     <p class="text-gray-600 dark:text-gray-400">${i18n.t('settings.title')}</p>
                 </div>
                 <div class="space-y-3">
+                    <button id="manageCategoriesBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-indigo-50 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors">
+                        <iconify-icon icon="mdi:tag-multiple-outline"></iconify-icon>
+                        <span>${i18n.t('settings.manageCategories') || 'Manage Categories'}</span>
+                    </button>
+                    <button id="managePrioritiesBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors">
+                        <iconify-icon icon="mdi:flag-outline"></iconify-icon>
+                        <span>${i18n.t('settings.managePriorities') || 'Manage Priorities'}</span>
+                    </button>
                     <button id="exportBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-800 transition-colors">
                         <iconify-icon icon="mdi:download-outline"></iconify-icon>
                         <span>${i18n.t('settings.export')}</span>
@@ -355,6 +363,8 @@ class UI {
 
         const { $modal, closeModal } = this.showModal(title, bodyHtml, footerHtml);
         $modal.find('.close-btn').on('click', closeModal);
+        $modal.find('#manageCategoriesBtn').on('click', () => { closeModal(); this.showCategoryManager(); });
+        $modal.find('#managePrioritiesBtn').on('click', () => { closeModal(); this.showPriorityManager(); });
         // Bind settings actions here
     }
 
@@ -452,6 +462,246 @@ class UI {
      */
     escapeHtml(text) {
         return text ? $('<div>').text(text).html() : '';
+    }
+
+    /**
+     * Show Category Manager modal (CRUD)
+     */
+    showCategoryManager() {
+        const categories = storage.getCategories();
+        const listHtml = categories.map(c => `
+            <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-5 h-5 rounded-full border" style="background-color: ${c.color};"></span>
+                    <span class="font-medium text-gray-800 dark:text-gray-100">${this.escapeHtml(c.name)}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button class="edit-category-btn p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors" data-id="${c.id}">
+                        <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                    </button>
+                    <button class="delete-category-btn p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors" data-id="${c.id}">
+                        <iconify-icon icon="mdi:delete-outline" class="text-sm"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        const bodyHtml = `
+            <div class="space-y-3">
+                ${listHtml || `<p class="text-center text-gray-500 dark:text-gray-400">${i18n.t('category.noCategories') || 'No categories yet.'}</p>`}
+            </div>`;
+
+        const footerHtml = `
+            <div class="flex flex-col sm:flex-row gap-3 sm:justify-between">
+                <button class="add-category-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-sm transition-colors flex items-center space-x-2">
+                    <iconify-icon icon="mdi:plus"></iconify-icon>
+                    <span>${i18n.t('category.add') || 'Add Category'}</span>
+                </button>
+                <button class="close-btn px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors">
+                    ${i18n.t('common.close')}
+                </button>
+            </div>`;
+
+        const { $modal, closeModal } = this.showModal(i18n.t('category.manage') || 'Manage Categories', bodyHtml, footerHtml);
+
+        $modal.find('.close-btn').on('click', closeModal);
+        $modal.find('.add-category-btn').on('click', () => {
+            this.showCategoryFormModal(null, () => { closeModal(); this.showCategoryManager(); });
+        });
+        $modal.find('.edit-category-btn').on('click', (e) => {
+            const id = $(e.currentTarget).data('id');
+            const category = storage.getCategory(id);
+            if (category) this.showCategoryFormModal(category, () => { closeModal(); this.showCategoryManager(); });
+        });
+        $modal.find('.delete-category-btn').on('click', (e) => {
+            const id = $(e.currentTarget).data('id');
+            if (confirm(i18n.t('messages.confirmDelete') || 'Delete?')) {
+                storage.deleteCategory(id);
+                this.loadCategories();
+                this.renderTasks();
+                this.showNotification(i18n.t('messages.success') || 'Deleted', 'success');
+                closeModal();
+                this.showCategoryManager();
+            }
+        });
+    }
+
+    /**
+     * Show Category Form modal for create / edit
+     */
+    showCategoryFormModal(category = null, onSave = () => {}) {
+        const isEdit = !!category;
+        const title = isEdit ? (i18n.t('category.edit') || 'Edit Category') : (i18n.t('category.add') || 'Add Category');
+
+        const bodyHtml = `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('category.name') || 'Name'}</label>
+                    <input type="text" id="categoryName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${this.escapeHtml(category?.name || '')}" placeholder="Category name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('category.color') || 'Color'}</label>
+                    <input type="color" id="categoryColor" class="w-full h-10 border-0 p-0 bg-transparent" value="${category?.color || '#3B82F6'}">
+                </div>
+            </div>`;
+
+        const footerHtml = `
+            <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                <button class="cancel-btn px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg font-medium transition-colors">
+                    ${i18n.t('common.cancel')}
+                </button>
+                <button class="save-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-sm transition-colors flex items-center space-x-2">
+                    <iconify-icon icon="mdi:content-save-outline"></iconify-icon>
+                    <span>${i18n.t('common.save')}</span>
+                </button>
+            </div>`;
+
+        const { $modal, closeModal } = this.showModal(title, bodyHtml, footerHtml);
+        $modal.find('.cancel-btn').on('click', closeModal);
+        $modal.find('.save-btn').on('click', () => {
+            const name = $modal.find('#categoryName').val().trim();
+            const color = $modal.find('#categoryColor').val();
+            if (!name) {
+                this.showNotification(i18n.t('messages.fillRequired') || 'Please fill required fields', 'error');
+                return;
+            }
+            if (isEdit) {
+                storage.updateCategory(category.id, { name, color });
+                this.showNotification(i18n.t('messages.success') || 'Saved', 'success');
+            } else {
+                storage.addCategory({ name, color });
+                this.showNotification(i18n.t('messages.success') || 'Saved', 'success');
+            }
+            this.loadCategories();
+            this.renderTasks();
+            closeModal();
+            onSave();
+        });
+        setTimeout(() => $modal.find('#categoryName').focus(), 100);
+    }
+
+    /**
+     * Show Priority Manager modal (CRUD)
+     */
+    showPriorityManager() {
+        const priorities = storage.getPriorities().sort((a,b) => a.order - b.order);
+        const listHtml = priorities.map(p => `
+            <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-5 h-5 rounded-full border" style="background-color: ${p.color};"></span>
+                    <span class="font-medium text-gray-800 dark:text-gray-100">${this.escapeHtml(p.name)}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">#${p.order}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button class="edit-priority-btn p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors" data-id="${p.id}">
+                        <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                    </button>
+                    <button class="delete-priority-btn p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-500 transition-colors" data-id="${p.id}">
+                        <iconify-icon icon="mdi:delete-outline" class="text-sm"></iconify-icon>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        const bodyHtml = `
+            <div class="space-y-3">
+                ${listHtml || `<p class="text-center text-gray-500 dark:text-gray-400">${i18n.t('priority.noPriorities') || 'No priorities yet.'}</p>`}
+            </div>`;
+
+        const footerHtml = `
+            <div class="flex flex-col sm:flex-row gap-3 sm:justify-between">
+                <button class="add-priority-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold shadow-sm transition-colors flex items-center space-x-2">
+                    <iconify-icon icon="mdi:plus"></iconify-icon>
+                    <span>${i18n.t('priority.add') || 'Add Priority'}</span>
+                </button>
+                <button class="close-btn px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors">
+                    ${i18n.t('common.close')}
+                </button>
+            </div>`;
+
+        const { $modal, closeModal } = this.showModal(i18n.t('priority.manage') || 'Manage Priorities', bodyHtml, footerHtml);
+
+        $modal.find('.close-btn').on('click', closeModal);
+        $modal.find('.add-priority-btn').on('click', () => {
+            this.showPriorityFormModal(null, () => { closeModal(); this.showPriorityManager(); });
+        });
+        $modal.find('.edit-priority-btn').on('click', (e) => {
+            const id = $(e.currentTarget).data('id');
+            const priority = storage.getPriority(id);
+            if (priority) this.showPriorityFormModal(priority, () => { closeModal(); this.showPriorityManager(); });
+        });
+        $modal.find('.delete-priority-btn').on('click', (e) => {
+            const id = $(e.currentTarget).data('id');
+            if (confirm(i18n.t('messages.confirmDelete') || 'Delete?')) {
+                storage.deletePriority(id);
+                this.loadPriorities();
+                this.renderTasks();
+                this.showNotification(i18n.t('messages.success') || 'Deleted', 'success');
+                closeModal();
+                this.showPriorityManager();
+            }
+        });
+    }
+
+    /**
+     * Show Priority Form modal
+     */
+    showPriorityFormModal(priority = null, onSave = () => {}) {
+        const isEdit = !!priority;
+        const title = isEdit ? (i18n.t('priority.edit') || 'Edit Priority') : (i18n.t('priority.add') || 'Add Priority');
+
+        const bodyHtml = `
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('priority.name') || 'Name'}</label>
+                    <input type="text" id="priorityName" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${this.escapeHtml(priority?.name || '')}" placeholder="Priority name">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('priority.color') || 'Color'}</label>
+                        <input type="color" id="priorityColor" class="w-full h-10 border-0 p-0 bg-transparent" value="${priority?.color || '#6B7280'}">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">${i18n.t('priority.order') || 'Order'}</label>
+                        <input type="number" min="1" id="priorityOrder" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100" value="${priority?.order || 1}">
+                    </div>
+                </div>
+            </div>`;
+
+        const footerHtml = `
+            <div class="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                <button class="cancel-btn px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg font-medium transition-colors">
+                    ${i18n.t('common.cancel')}
+                </button>
+                <button class="save-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold shadow-sm transition-colors flex items-center space-x-2">
+                    <iconify-icon icon="mdi:content-save-outline"></iconify-icon>
+                    <span>${i18n.t('common.save')}</span>
+                </button>
+            </div>`;
+
+        const { $modal, closeModal } = this.showModal(title, bodyHtml, footerHtml);
+        $modal.find('.cancel-btn').on('click', closeModal);
+        $modal.find('.save-btn').on('click', () => {
+            const name = $modal.find('#priorityName').val().trim();
+            const color = $modal.find('#priorityColor').val();
+            const order = parseInt($modal.find('#priorityOrder').val(), 10) || 1;
+            if (!name) {
+                this.showNotification(i18n.t('messages.fillRequired') || 'Please fill required fields', 'error');
+                return;
+            }
+            if (isEdit) {
+                storage.updatePriority(priority.id, { name, color, order });
+                this.showNotification(i18n.t('messages.success') || 'Saved', 'success');
+            } else {
+                storage.addPriority({ name, color, order });
+                this.showNotification(i18n.t('messages.success') || 'Saved', 'success');
+            }
+            this.loadPriorities();
+            this.renderTasks();
+            closeModal();
+            onSave();
+        });
+        setTimeout(() => $modal.find('#priorityName').focus(), 100);
     }
 }
 

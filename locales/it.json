@@ -30,7 +30,9 @@
     "add": "Aggiungi Categoria",
     "edit": "Modifica Categoria",
     "delete": "Elimina Categoria",
-    "confirmDelete": "Sei sicuro di voler eliminare questa categoria? I task in questa categoria verranno spostati in 'Senza categoria'."
+    "confirmDelete": "Sei sicuro di voler eliminare questa categoria? I task in questa categoria verranno spostati in 'Senza categoria.'",
+    "color": "Colore",
+    "noCategories": "Nessuna categoria presente."
   },
   "priority": {
     "name": "Nome priorità",
@@ -42,7 +44,10 @@
     "high": "Alta",
     "medium": "Media",
     "low": "Bassa",
-    "normal": "Normale"
+    "normal": "Normale",
+    "color": "Colore",
+    "order": "Ordine",
+    "noPriorities": "Nessuna priorità presente."
   },
   "filter": {
     "allCategories": "Tutte le Categorie",
@@ -62,7 +67,9 @@
     },
     "export": "Esporta Dati",
     "import": "Importa Dati",
-    "reset": "Reimposta Tutti i Dati"
+    "reset": "Reimposta Tutti i Dati",
+    "manageCategories": "Gestisci Categorie",
+    "managePriorities": "Gestisci Priorità"
   },
   "common": {
     "save": "Salva",
@@ -90,6 +97,8 @@
     "priorityUpdated": "Priorità aggiornata con successo",
     "priorityDeleted": "Priorità eliminata con successo",
     "fillRequired": "Compila tutti i campi obbligatori",
-    "confirmDeleteTask": "Sei sicuro di voler eliminare questo task?"
+    "confirmDeleteTask": "Sei sicuro di voler eliminare questo task?",
+    "confirmDelete": "Sei sicuro di voler eliminare questo elemento?",
+    "success": "Operazione completata con successo"
   }
 }

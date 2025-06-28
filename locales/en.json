@@ -30,7 +30,9 @@
     "add": "Add Category",
     "edit": "Edit Category",
     "delete": "Delete Category",
-    "confirmDelete": "Are you sure you want to delete this category? Tasks in this category will be moved to 'Uncategorized'."
+    "confirmDelete": "Are you sure you want to delete this category? Tasks in this category will be moved to 'Uncategorized.'",
+    "color": "Color",
+    "noCategories": "No categories yet."
   },
   "priority": {
     "name": "Priority name",
@@ -42,7 +44,10 @@
     "high": "High",
     "medium": "Medium",
     "low": "Low",
-    "normal": "Normal"
+    "normal": "Normal",
+    "color": "Color",
+    "order": "Order",
+    "noPriorities": "No priorities yet."
   },
   "filter": {
     "allCategories": "All Categories",
@@ -62,7 +67,9 @@
     },
     "export": "Export Data",
     "import": "Import Data",
-    "reset": "Reset All Data"
+    "reset": "Reset All Data",
+    "manageCategories": "Manage Categories",
+    "managePriorities": "Manage Priorities"
   },
   "common": {
     "save": "Save",
@@ -90,6 +97,8 @@
     "priorityUpdated": "Priority updated successfully",
     "priorityDeleted": "Priority deleted successfully",
     "fillRequired": "Please fill in all required fields",
-    "confirmDeleteTask": "Are you sure you want to delete this task?"
+    "confirmDeleteTask": "Are you sure you want to delete this task?",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "success": "Operation completed successfully"
   }
 }
