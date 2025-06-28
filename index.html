@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskToGo</title>
 
+    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="css/styles.css">
     <script>
@@ -21,17 +39,29 @@
         <!-- Modern Header/Toolbar -->
         <header class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700">
             <div class="flex items-center space-x-2">
-                <iconify-icon icon="mdi:check-circle-outline" class="text-2xl text-blue-600 dark:text-blue-500"></iconify-icon>
+                <img src="img/logo.png" alt="TaskToGo" class="w-8 h-8">
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white">TaskToGo</h1>
             </div>
             <div class="flex items-center space-x-1">
                 <button id="themeSwitcherBtn" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.theme">
                     <iconify-icon icon="mdi:theme-light-dark" class="text-lg"></iconify-icon>
                 </button>
-                <select id="languageSelect" class="bg-transparent text-sm rounded-lg px-3 py-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors appearance-none">
-                    <option value="en" class="bg-white dark:bg-gray-800">EN</option>
-                    <option value="it" class="bg-white dark:bg-gray-800">IT</option>
-                </select>
+                <div class="relative">
+                    <button id="languageSelectBtn" class="flex items-center space-x-2 bg-transparent text-sm rounded-lg px-3 py-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                        <iconify-icon id="currentLanguageIcon" icon="circle-flags:us" class="text-lg"></iconify-icon>
+                        <iconify-icon icon="mdi:chevron-down" class="text-sm"></iconify-icon>
+                    </button>
+                    <div id="languageDropdown" class="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50 hidden">
+                        <button class="language-option w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 transition-colors" data-value="en">
+                            <iconify-icon icon="circle-flags:us" class="text-lg"></iconify-icon>
+                            <span class="text-sm">EN</span>
+                        </button>
+                        <button class="language-option w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 transition-colors" data-value="it">
+                            <iconify-icon icon="circle-flags:it" class="text-lg"></iconify-icon>
+                            <span class="text-sm">IT</span>
+                        </button>
+                    </div>
+                </div>
                 <button id="settingsBtn" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.title">
                     <iconify-icon icon="mdi:cog-outline" class="text-lg"></iconify-icon>
                 </button>
@@ -117,9 +147,11 @@
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@3/dist/iconify-icon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
 
+    <script src="js/utils.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/models.js"></script>
+    <script src="js/services/TaskService.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/app.js"></script>
 </body>
