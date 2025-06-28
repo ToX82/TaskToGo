@@ -7,6 +7,33 @@
  * implementati con Tailwind CDN.
  */
 
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #60a5fa;
+  --color-text: #1f2937;
+  --color-text-dark: #f3f4f6;
+  --color-bg: #ffffff;
+  --color-bg-dark: #111827;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-secondary-dark: #1f2937;
+  --color-border: #e5e7eb;
+  --color-border-dark: #374151;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow-dark: rgba(0, 0, 0, 0.3);
+}
+
+html.dark {
+  --color-bg: #181A1B;
+  --color-bg-secondary: #23272A;
+  --color-card: #222327;
+  --color-text: #E0E0E0;
+  --color-text-secondary: #B0B0B0;
+  --color-border: #33373A;
+  --color-primary: #60a5fa;
+  --color-accent: #22d3ee;
+  --color-shadow: rgba(0,0,0,0.22);
+}
+
 /* 1. Custom Checkbox - Stile Moderno
 ------------------------------------ */
 .custom-checkbox {
@@ -18,8 +45,8 @@
 
 .custom-checkbox:checked {
     position: relative;
-    background-color: #3b82f6; /* bg-blue-600 */
-    border-color: #3b82f6;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .custom-checkbox:checked::after {
@@ -34,7 +61,7 @@
 }
 
 .custom-checkbox:hover {
-    border-color: #3b82f6;
+    border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
@@ -47,9 +74,9 @@
 /* 2. Filter Button Active State - Design Moderno
 ------------------------------------ */
 .filter-btn.active {
-    background-color: #3b82f6 !important; /* bg-blue-600 */
+    background-color: var(--color-primary) !important;
     color: white !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px var(--color-shadow), 0 2px 4px -1px var(--color-shadow);
 }
 
 .dark .filter-btn.active {
@@ -65,7 +92,7 @@
 
 .task-item:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 15px -3px var(--color-shadow), 0 4px 6px -2px var(--color-shadow);
 }
 
 .task-item:hover .task-actions {
@@ -148,7 +175,7 @@
 .focus-ring:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    border-color: #3b82f6;
+    border-color: var(--color-primary);
 }
 
 .dark .focus-ring:focus {
