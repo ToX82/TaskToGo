@@ -26,7 +26,9 @@
     "images": "Immagini",
     "addImage": "Aggiungi Immagine",
     "viewImage": "Visualizza Immagine",
-    "pasteImageHint": "Oppure incolla immagine dagli appunti"
+    "pasteImageHint": "Oppure incolla immagine dagli appunti",
+    "noImages": "Nessuna immagine",
+    "removeImage": "Rimuovi immagine"
   },
   "category": {
     "name": "Nome categoria",
@@ -73,7 +75,10 @@
     "import": "Importa Dati",
     "reset": "Reimposta Tutti i Dati",
     "manageCategories": "Gestisci Categorie",
-    "managePriorities": "Gestisci Priorità"
+    "managePriorities": "Gestisci Priorità",
+    "subtitle": "Configura le tue preferenze",
+    "manageSection": "Gestione",
+    "dataSection": "Dati"
   },
   "common": {
     "save": "Salva",

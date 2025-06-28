@@ -39,7 +39,10 @@ class UI {
         const currentLanguage = i18n.currentLanguage || 'en';
         const languageIcons = {
             'en': 'circle-flags:us',
-            'it': 'circle-flags:it'
+            'it': 'circle-flags:it',
+            'fr': 'circle-flags:fr',
+            'es': 'circle-flags:es',
+            'de': 'circle-flags:de'
         };
 
         // Set the correct icon for current language
@@ -169,7 +172,10 @@ class UI {
     selectLanguage(language) {
         const languageIcons = {
             'en': 'circle-flags:us',
-            'it': 'circle-flags:it'
+            'it': 'circle-flags:it',
+            'fr': 'circle-flags:fr',
+            'es': 'circle-flags:es',
+            'de': 'circle-flags:de'
         };
 
         // Update current language icon
@@ -294,7 +300,7 @@ class UI {
                     <button class="remove-image-btn absolute -top-1 -right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs flex items-center justify-center transition-colors"
                             data-task-id="${task.id}"
                             data-image-id="${imageId}"
-                            title="Rimuovi immagine">
+                            title="${i18n.t('task.removeImage') || 'Remove image'}">
                         <iconify-icon icon="mdi:close" class="text-xs"></iconify-icon>
                     </button>
                 </div>
@@ -309,7 +315,7 @@ class UI {
      */
     renderTaskModalImages(task) {
         if (!task || !task.images || !task.images.length) {
-            return '<span class="text-gray-400 dark:text-gray-500 text-sm italic">No images</span>';
+            return `<span class="text-gray-400 dark:text-gray-500 text-sm italic">${i18n.t('task.noImages') || 'No images'}</span>`;
         }
 
         const images = task.getImages ? task.getImages() : task.images;
@@ -531,39 +537,51 @@ class UI {
     }
 
     showSettingsModal() {
-        // Implementazione settings modal con nuovo design
+        // Modern & readable Settings modal
         const title = i18n.t('settings.title');
+
+        // Modal body – grouped by purpose for better scan-ability
         const bodyHtml = `
-            <div class="space-y-4">
-                <div class="text-center py-4">
-                    <iconify-icon icon="mdi:cog-outline" class="text-4xl text-blue-600 dark:text-blue-400 mb-2"></iconify-icon>
-                    <p class="text-gray-600 dark:text-gray-400">${i18n.t('settings.title')}</p>
+            <div class="space-y-6">
+                <!-- Manage entities section -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">${i18n.t('settings.manageSection') || 'Manage'}</h4>
+                    <div class="space-y-3">
+                        <button id="manageCategoriesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 dark:bg-indigo-900 hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors text-indigo-700 dark:text-indigo-300">
+                            <iconify-icon icon="mdi:tag-multiple-outline" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">${i18n.t('settings.manageCategories') || 'Manage Categories'}</span>
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm opacity-60"></iconify-icon>
+                        </button>
+                        <button id="managePrioritiesBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-purple-50 dark:bg-purple-900 hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors text-purple-700 dark:text-purple-300">
+                            <iconify-icon icon="mdi:flag-outline" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">${i18n.t('settings.managePriorities') || 'Manage Priorities'}</span>
+                            <iconify-icon icon="mdi:chevron-right" class="text-sm opacity-60"></iconify-icon>
+                        </button>
+                    </div>
                 </div>
-                <div class="space-y-3">
-                    <button id="manageCategoriesBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-indigo-50 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-colors">
-                        <iconify-icon icon="mdi:tag-multiple-outline"></iconify-icon>
-                        <span>${i18n.t('settings.manageCategories') || 'Manage Categories'}</span>
-                    </button>
-                    <button id="managePrioritiesBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors">
-                        <iconify-icon icon="mdi:flag-outline"></iconify-icon>
-                        <span>${i18n.t('settings.managePriorities') || 'Manage Priorities'}</span>
-                    </button>
-                    <button id="exportBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-100 dark:hover:bg-green-800 transition-colors">
-                        <iconify-icon icon="mdi:download-outline"></iconify-icon>
-                        <span>${i18n.t('settings.export')}</span>
-                    </button>
-                    <button id="importBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors">
-                        <iconify-icon icon="mdi:upload-outline"></iconify-icon>
-                        <span>${i18n.t('settings.import')}</span>
-                    </button>
-                    <button id="resetBtn" class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-100 dark:hover:bg-red-800 transition-colors">
-                        <iconify-icon icon="mdi:delete-sweep-outline"></iconify-icon>
-                        <span>${i18n.t('settings.reset')}</span>
-                    </button>
+
+                <!-- Backup / data section -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">${i18n.t('settings.dataSection') || 'Data'}</h4>
+                    <div class="space-y-3">
+                        <button id="exportBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900 hover:bg-green-100 dark:hover:bg-green-800 transition-colors text-green-700 dark:text-green-300">
+                            <iconify-icon icon="mdi:download-outline" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">${i18n.t('settings.export')}</span>
+                        </button>
+                        <button id="importBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 dark:bg-blue-900 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors text-blue-700 dark:text-blue-300">
+                            <iconify-icon icon="mdi:upload-outline" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">${i18n.t('settings.import')}</span>
+                        </button>
+                        <button id="resetBtn" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900 hover:bg-red-100 dark:hover:bg-red-800 transition-colors text-red-700 dark:text-red-300">
+                            <iconify-icon icon="mdi:delete-sweep-outline" class="text-lg"></iconify-icon>
+                            <span class="flex-1 text-left">${i18n.t('settings.reset')}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
 
+        // Footer – single close button
         const footerHtml = `
             <button class="close-btn w-full px-4 py-2 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors">
                 ${i18n.t('common.close')}
@@ -571,30 +589,31 @@ class UI {
         `;
 
         const { $modal, closeModal } = this.showModal(title, bodyHtml, footerHtml);
+
+        // Widen modal and make body scrollable for long content
+        $modal.find('.max-w-md').removeClass('max-w-md').addClass('sm:max-w-lg');
+        $modal.find('.modal-body').addClass('overflow-y-auto max-h-[75vh] pr-1');
+
+        // Actions bindings
         $modal.find('.close-btn').on('click', closeModal);
         $modal.find('#manageCategoriesBtn').on('click', () => { closeModal(); this.showCategoryManager(); });
         $modal.find('#managePrioritiesBtn').on('click', () => { closeModal(); this.showPriorityManager(); });
-        // Bind settings actions here
 
-        // 1. Export data
+        // Export data
         $modal.find('#exportBtn').on('click', () => {
             app.exportData();
         });
 
-        // 2. Import data (via hidden file input)
+        // Import data (hidden input)
         const $fileInput = $('<input type="file" accept="application/json" class="hidden">');
         $('body').append($fileInput);
-
         $modal.find('#importBtn').on('click', () => {
-            $fileInput.val(''); // reset previous selection
+            $fileInput.val('');
             $fileInput.one('change', (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
                 app.importData(file)
-                    .then(() => {
-                        closeModal();
-                        $fileInput.remove();
-                    })
+                    .then(() => { closeModal(); $fileInput.remove(); })
                     .catch((err) => {
                         console.error('Import failed:', err);
                         ui.showNotification(i18n.t('messages.importFailed') || 'Failed to import', 'error');
@@ -604,7 +623,7 @@ class UI {
             $fileInput.trigger('click');
         });
 
-        // 3. Reset all data
+        // Reset all data
         $modal.find('#resetBtn').on('click', () => {
             closeModal();
             app.resetAllData();
@@ -1118,7 +1137,7 @@ class UI {
         const $container = $modal.find('#taskImages');
 
         if (tempImages.length === 0) {
-            $container.html('<span class="text-gray-400 dark:text-gray-500 text-sm italic">No images</span>');
+            $container.html(`<span class="text-gray-400 dark:text-gray-500 text-sm italic">${i18n.t('task.noImages') || 'No images'}</span>`);
             $modal.find('#imageSection').addClass('hidden');
             $modal.find('#showImagesToggle').removeClass('hidden');
             return;

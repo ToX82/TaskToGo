@@ -26,7 +26,9 @@
     "images": "Images",
     "addImage": "Add Image",
     "viewImage": "View Image",
-    "pasteImageHint": "Or paste image from clipboard"
+    "pasteImageHint": "Or paste image from clipboard",
+    "noImages": "No images",
+    "removeImage": "Remove image"
   },
   "category": {
     "name": "Category name",
@@ -73,7 +75,10 @@
     "import": "Import Data",
     "reset": "Reset All Data",
     "manageCategories": "Manage Categories",
-    "managePriorities": "Manage Priorities"
+    "managePriorities": "Manage Priorities",
+    "subtitle": "Configure your preferences",
+    "manageSection": "Manage",
+    "dataSection": "Data"
   },
   "common": {
     "save": "Save",

@@ -14,15 +14,16 @@ class I18n {
     detectLanguage() {
         // Check localStorage first
         const savedLang = localStorage.getItem('taskToGo_language');
-        if (savedLang && ['en', 'it'].includes(savedLang)) {
+        if (savedLang && ['en', 'it', 'fr', 'es', 'de'].includes(savedLang)) {
             return savedLang;
         }
 
         // Check browser language
         const browserLang = navigator.language.toLowerCase();
-        if (browserLang.startsWith('it')) {
-            return 'it';
-        }
+        if (browserLang.startsWith('it')) return 'it';
+        if (browserLang.startsWith('fr')) return 'fr';
+        if (browserLang.startsWith('es')) return 'es';
+        if (browserLang.startsWith('de')) return 'de';
 
         // Default to English
         return 'en';
@@ -102,7 +103,10 @@ class I18n {
         if (currentLanguageIcon) {
             const languageIcons = {
                 'en': 'circle-flags:us',
-                'it': 'circle-flags:it'
+                'it': 'circle-flags:it',
+                'fr': 'circle-flags:fr',
+                'es': 'circle-flags:es',
+                'de': 'circle-flags:de'
             };
             currentLanguageIcon.setAttribute('icon', languageIcons[this.currentLanguage] || 'circle-flags:us');
         }
@@ -124,7 +128,10 @@ class I18n {
     getAvailableLanguages() {
         return [
             { code: 'en', name: 'English' },
-            { code: 'it', name: 'Italiano' }
+            { code: 'it', name: 'Italiano' },
+            { code: 'fr', name: 'Français' },
+            { code: 'es', name: 'Español' },
+            { code: 'de', name: 'Deutsch' }
         ];
     }
 }

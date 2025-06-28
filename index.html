@@ -46,6 +46,9 @@
                 <button id="themeSwitcherBtn" class="flex items-center justify-center p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.theme">
                     <iconify-icon icon="mdi:theme-light-dark" class="text-lg"></iconify-icon>
                 </button>
+                <button id="settingsBtn" class="flex items-center justify-center p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.title">
+                    <iconify-icon icon="mdi:cog-outline" class="text-lg"></iconify-icon>
+                </button>
                 <div class="relative">
                     <button id="languageSelectBtn" class="flex items-center justify-center space-x-2 bg-transparent text-sm rounded-lg px-3 py-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
                         <iconify-icon id="currentLanguageIcon" icon="circle-flags:us" class="text-lg"></iconify-icon>
@@ -60,11 +63,20 @@
                             <iconify-icon icon="circle-flags:it" class="text-lg"></iconify-icon>
                             <span class="text-sm">IT</span>
                         </button>
+                        <button class="language-option w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center space-x-2 transition-colors" data-value="fr">
+                            <iconify-icon icon="circle-flags:fr" class="text-lg"></iconify-icon>
+                            <span class="text-sm">FR</span>
+                        </button>
+                        <button class="language-option w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center space-x-2 transition-colors" data-value="es">
+                            <iconify-icon icon="circle-flags:es" class="text-lg"></iconify-icon>
+                            <span class="text-sm">ES</span>
+                        </button>
+                        <button class="language-option w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center space-x-2 transition-colors" data-value="de">
+                            <iconify-icon icon="circle-flags:de" class="text-lg"></iconify-icon>
+                            <span class="text-sm">DE</span>
+                        </button>
                     </div>
                 </div>
-                <button id="settingsBtn" class="flex items-center justify-center p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.title">
-                    <iconify-icon icon="mdi:cog-outline" class="text-lg"></iconify-icon>
-                </button>
             </div>
         </header>
 
@@ -75,7 +87,7 @@
                     <input type="text" id="quickTaskInput" placeholder="" data-i18n-placeholder="task.quickAdd" class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-sm flex items-center space-x-2 transition-colors">
                         <iconify-icon icon="mdi:plus" class="text-lg"></iconify-icon>
-                        <span class="hidden sm:inline">Add</span>
+                        <span class="hidden sm:inline" data-i18n="common.add">Add</span>
                     </button>
                 </form>
             </div>
