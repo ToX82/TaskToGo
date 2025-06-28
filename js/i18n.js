@@ -97,10 +97,14 @@ class I18n {
             element.title = this.t(key);
         });
 
-        // Update language selector
-        const languageSelect = document.getElementById('languageSelect');
-        if (languageSelect) {
-            languageSelect.value = this.currentLanguage;
+        // Update language dropdown icon
+        const currentLanguageIcon = document.getElementById('currentLanguageIcon');
+        if (currentLanguageIcon) {
+            const languageIcons = {
+                'en': 'circle-flags:us',
+                'it': 'circle-flags:it'
+            };
+            currentLanguageIcon.setAttribute('icon', languageIcons[this.currentLanguage] || 'circle-flags:us');
         }
 
         // Update document language

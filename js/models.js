@@ -188,7 +188,7 @@ class Category {
      * Check if color is valid hex color
      */
     isValidColor(color) {
-        return /^#[0-9A-F]{6}$/i.test(color);
+        return utils.isValidHexColor(color);
     }
 
     /**
@@ -271,7 +271,7 @@ class Priority {
      * Check if color is valid hex color
      */
     isValidColor(color) {
-        return /^#[0-9A-F]{6}$/i.test(color);
+        return utils.isValidHexColor(color);
     }
 
     /**

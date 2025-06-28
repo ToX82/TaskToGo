@@ -96,6 +96,7 @@
     "priorityAdded": "Priorità aggiunta con successo",
     "priorityUpdated": "Priorità aggiornata con successo",
     "priorityDeleted": "Priorità eliminata con successo",
+    "languageChanged": "Lingua cambiata con successo",
     "fillRequired": "Compila tutti i campi obbligatori",
     "confirmDeleteTask": "Sei sicuro di voler eliminare questo task?",
     "confirmDelete": "Sei sicuro di voler eliminare questo elemento?",

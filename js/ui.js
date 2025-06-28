@@ -16,6 +16,7 @@ class UI {
      */
     init() {
         this.initTheme();
+        this.initLanguage();
         this.bindEvents();
         this.loadCategories();
         this.loadPriorities();
@@ -32,6 +33,20 @@ class UI {
     }
 
     /**
+     * Initialize language based on stored preference
+     */
+    initLanguage() {
+        const currentLanguage = i18n.currentLanguage || 'en';
+        const languageIcons = {
+            'en': 'circle-flags:us',
+            'it': 'circle-flags:it'
+        };
+
+        // Set the correct icon for current language
+        $('#currentLanguageIcon').attr('icon', languageIcons[currentLanguage] || 'circle-flags:us');
+    }
+
+    /**
      * Apply theme to the document
      */
     applyTheme(theme) {
@@ -44,7 +59,25 @@ class UI {
      */
     bindEvents() {
         $('#themeSwitcherBtn').on('click', () => this.rotateTheme());
-        $('#languageSelect').on('change', (e) => i18n.setLanguage(e.target.value).then(() => this.renderTasks()));
+
+        // Language dropdown events
+        $('#languageSelectBtn').on('click', (e) => {
+            e.stopPropagation();
+            this.toggleLanguageDropdown();
+        });
+
+        $('.language-option').on('click', (e) => {
+            const language = $(e.currentTarget).data('value');
+            this.selectLanguage(language);
+        });
+
+        // Close dropdown when clicking outside
+        $(document).on('click', (e) => {
+            if (!$(e.target).closest('#languageSelectBtn, #languageDropdown').length) {
+                this.closeLanguageDropdown();
+            }
+        });
+
         $('#quickAddForm').on('submit', (e) => { e.preventDefault(); this.quickAddTask(); });
         $('#addTaskBtn').on('click', () => this.showTaskModal());
         $('#settingsBtn').on('click', () => this.showSettingsModal());
@@ -57,6 +90,31 @@ class UI {
             this.updateToggleCompletedButton();
             this.renderTasks();
         });
+
+        // Event delegation per task list – un solo listener per tipo di evento
+        const $taskList = $('#taskList');
+
+        // Toggle completion checkbox
+        $taskList.off('change', '.custom-checkbox')
+            .on('change', '.custom-checkbox', (e) => {
+                const taskId = $(e.currentTarget).closest('.task-item').data('task-id');
+                if (taskId) this.toggleTaskCompletion(taskId);
+            });
+
+        // Edit task button
+        $taskList.off('click', '.edit-task-btn')
+            .on('click', '.edit-task-btn', (e) => {
+                const taskId = $(e.currentTarget).closest('.task-item').data('task-id');
+                const task = storage.getTask(taskId);
+                if (task) this.showTaskModal(Task.fromObject(task));
+            });
+
+        // Delete task button
+        $taskList.off('click', '.delete-task-btn')
+            .on('click', '.delete-task-btn', (e) => {
+                const taskId = $(e.currentTarget).closest('.task-item').data('task-id');
+                if (taskId) this.deleteTask(taskId);
+            });
     }
 
     rotateTheme() {
@@ -66,6 +124,56 @@ class UI {
         storage.setTheme(this.currentTheme);
         this.applyTheme(this.currentTheme);
         this.showNotification(`${i18n.t('settings.theme')}: ${i18n.t('settings.themeOptions.' + this.currentTheme)}`, 'info');
+    }
+
+    /**
+     * Toggle language dropdown visibility
+     */
+    toggleLanguageDropdown() {
+        const $dropdown = $('#languageDropdown');
+        const isVisible = !$dropdown.hasClass('hidden');
+
+        if (isVisible) {
+            this.closeLanguageDropdown();
+        } else {
+            this.openLanguageDropdown();
+        }
+    }
+
+    /**
+     * Open language dropdown
+     */
+    openLanguageDropdown() {
+        $('#languageDropdown').removeClass('hidden');
+    }
+
+    /**
+     * Close language dropdown
+     */
+    closeLanguageDropdown() {
+        $('#languageDropdown').addClass('hidden');
+    }
+
+    /**
+     * Select a language and update UI
+     */
+    selectLanguage(language) {
+        const languageIcons = {
+            'en': 'circle-flags:us',
+            'it': 'circle-flags:it'
+        };
+
+        // Update current language icon
+        $('#currentLanguageIcon').attr('icon', languageIcons[language] || 'circle-flags:us');
+
+        // Close dropdown
+        this.closeLanguageDropdown();
+
+        // Change language
+        i18n.setLanguage(language).then(() => {
+            this.renderTasks();
+            this.showNotification(i18n.t('messages.languageChanged'), 'success');
+        });
     }
 
     /**
@@ -81,7 +189,7 @@ class UI {
         const task = new Task({ title, categoryId: defaultCategory?.id, priorityId: defaultPriority?.id });
         if (!task.validate().isValid) return;
 
-        storage.addTask(task.toObject());
+        taskService.add(task);
         $('#quickTaskInput').val('');
         this.renderTasks();
         this.showNotification(i18n.t('messages.taskAdded'), 'success');
@@ -92,7 +200,7 @@ class UI {
      */
     renderTasks() {
         const filters = { ...this.currentFilters, completed: this.currentFilters.showCompleted ? undefined : false };
-        const tasks = TaskManager.getFilteredTasks(filters);
+        const tasks = taskService.list(filters);
 
         $('#emptyState').toggleClass('hidden', tasks.length > 0);
         const $taskList = $('#taskList').empty();
@@ -151,9 +259,6 @@ class UI {
             </div>`;
 
         const $task = $(taskHtml);
-        $task.find('.custom-checkbox').on('change', () => this.toggleTaskCompletion(task.id));
-        $task.find('.edit-task-btn').on('click', () => this.showTaskModal(task));
-        $task.find('.delete-task-btn').on('click', () => this.deleteTask(task.id));
         return $task;
     }
 
@@ -173,13 +278,8 @@ class UI {
      * Toggle task completion status
      */
     toggleTaskCompletion(taskId) {
-        const task = storage.getTask(taskId);
-        if (task) {
-            const taskObj = Task.fromObject(task);
-            taskObj.toggleCompleted();
-            storage.updateTask(taskId, taskObj.toObject());
-            this.renderTasks();
-        }
+        taskService.toggleCompletion(taskId);
+        this.renderTasks();
     }
 
     /**
@@ -187,7 +287,7 @@ class UI {
      */
     deleteTask(taskId) {
         if (confirm(i18n.t('messages.confirmDeleteTask'))) {
-            storage.deleteTask(taskId);
+            taskService.delete(taskId);
             $(`[data-task-id="${taskId}"]`).fadeOut(300, () => this.renderTasks());
             this.showNotification(i18n.t('messages.taskDeleted'), 'success');
         }
@@ -312,10 +412,14 @@ class UI {
             return;
         }
 
-        const action = task ? storage.updateTask : storage.addTask;
-        const message = task ? 'messages.taskUpdated' : 'messages.taskAdded';
+        const isUpdate = Boolean(task);
+        if (isUpdate) {
+            taskService.update(task.id, taskInstance.toObject());
+        } else {
+            taskService.add(taskInstance);
+        }
 
-        action.call(storage, taskInstance.toObject());
+        const message = isUpdate ? 'messages.taskUpdated' : 'messages.taskAdded';
         this.renderTasks();
         this.showNotification(i18n.t(message), 'success');
         closeModal();
