@@ -220,37 +220,39 @@ class UI {
         const category = task.getCategory();
         const priority = task.getPriority();
         const priorityColor = priority ? priority.color : '#6b7280';
+
+        // Compact due date badge
         const dueDate = task.getFormattedDueDate() ?
-            `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${this.getDueDateClass(task.getDueDateStatus())} bg-opacity-10">
-                <iconify-icon icon="mdi:calendar-blank-outline" class="mr-1"></iconify-icon>
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${this.getDueDateClass(task.getDueDateStatus())} bg-opacity-10">
+                <iconify-icon icon="mdi:calendar-blank-outline" class="text-xs mr-0.5"></iconify-icon>
                 ${task.getFormattedDueDate()}
             </span>` : '';
 
+        // Compact category badge
         const categoryBadge = category ?
-            `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white" style="background-color: ${category.color}">
-                <iconify-icon icon="mdi:tag-outline" class="mr-1"></iconify-icon>
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white" style="background-color: ${category.color}">
+                <iconify-icon icon="mdi:tag-outline" class="text-xs mr-0.5"></iconify-icon>
                 ${this.escapeHtml(category.name)}
             </span>` : '';
 
         const taskHtml = `
-            <div class="task-item bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 p-4 hover:shadow-md transition-shadow duration-200 ${task.completed ? 'opacity-60' : ''}"
-                 style="border-left: 4px solid ${priorityColor};" data-task-id="${task.id}">
-                <div class="flex items-start gap-3">
-                    <input type="checkbox" class="custom-checkbox w-5 h-5 mt-0.5 border-2 border-gray-300 dark:border-gray-500 rounded-md focus-ring" ${task.completed ? 'checked' : ''}>
+            <div class="task-item bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 p-2.5 hover:shadow-md transition-shadow ${task.completed ? 'opacity-60' : ''}" style="border-left: 3px solid ${priorityColor};" data-task-id="${task.id}">
+                <div class="flex items-start gap-2">
+                    <input type="checkbox" class="custom-checkbox w-4 h-4 mt-0.5 border-2 border-gray-300 dark:border-gray-500 rounded focus-ring" ${task.completed ? 'checked' : ''}>
                     <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-semibold text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''}">${this.escapeHtml(task.title)}</h3>
-                            <div class="task-actions flex items-center space-x-1">
-                                <button class="edit-task-btn p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                    <iconify-icon icon="mdi:pencil-outline" class="text-sm"></iconify-icon>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-medium text-sm text-gray-900 dark:text-gray-100 ${task.completed ? 'line-through' : ''} leading-tight">${this.escapeHtml(task.title)}</h3>
+                            <div class="task-actions flex items-center space-x-0.5 ml-2">
+                                <button class="edit-task-btn p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                    <iconify-icon icon="mdi:pencil-outline" class="text-xs"></iconify-icon>
                                 </button>
-                                <button class="delete-task-btn p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                                    <iconify-icon icon="mdi:delete-outline" class="text-sm"></iconify-icon>
+                                <button class="delete-task-btn p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                                    <iconify-icon icon="mdi:delete-outline" class="text-xs"></iconify-icon>
                                 </button>
                             </div>
                         </div>
-                        ${task.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${this.escapeHtml(task.description)}</p>` : ''}
-                        <div class="flex items-center gap-2 flex-wrap">
+                        ${task.description ? `<p class="text-xs text-gray-600 dark:text-gray-400 mb-1.5 leading-relaxed">${this.escapeHtml(task.description)}</p>` : ''}
+                        <div class="flex items-center gap-1.5 flex-wrap">
                             ${dueDate}
                             ${categoryBadge}
                         </div>
