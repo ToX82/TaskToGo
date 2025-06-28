@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskToGo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+        // Immediately set theme from localStorage to prevent FOUC
+        const theme = localStorage.getItem('taskToGo_theme') || 'system';
+        if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+<body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 min-h-screen">
+    <div id="app" class="max-w-full mx-auto bg-white dark:bg-gray-800 shadow-lg min-h-screen lg:max-w-4xl lg:my-4 lg:rounded-lg lg:shadow-xl">
+
+        <!-- Modern Header/Toolbar -->
+        <header class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-100 dark:border-gray-700">
+            <div class="flex items-center space-x-2">
+                <iconify-icon icon="mdi:check-circle-outline" class="text-2xl text-blue-600 dark:text-blue-500"></iconify-icon>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">TaskToGo</h1>
+            </div>
+            <div class="flex items-center space-x-1">
+                <button id="themeSwitcherBtn" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.theme">
+                    <iconify-icon icon="mdi:theme-light-dark" class="text-lg"></iconify-icon>
+                </button>
+                <select id="languageSelect" class="bg-transparent text-sm rounded-lg px-3 py-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors appearance-none">
+                    <option value="en" class="bg-white dark:bg-gray-800">EN</option>
+                    <option value="it" class="bg-white dark:bg-gray-800">IT</option>
+                </select>
+                <button id="settingsBtn" class="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" data-i18n-title="settings.title">
+                    <iconify-icon icon="mdi:cog-outline" class="text-lg"></iconify-icon>
+                </button>
+            </div>
+        </header>
+
+        <!-- Quick Add Task Card -->
+        <div class="p-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 p-4">
+                <form id="quickAddForm" class="flex gap-3">
+                    <input type="text" id="quickTaskInput" placeholder="" data-i18n-placeholder="task.quickAdd" class="flex-1 px-4 py-3 bg-gray-50 dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm transition-all">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-sm flex items-center space-x-2 transition-colors">
+                        <iconify-icon icon="mdi:plus" class="text-lg"></iconify-icon>
+                        <span class="hidden sm:inline">Add</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filters Card -->
+        <div class="px-4 pb-4">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 p-4">
+                <div class="flex flex-wrap gap-3 items-center justify-between">
+                    <div class="flex flex-wrap gap-3">
+                        <select id="categoryFilter" class="text-sm px-3 py-2 border border-gray-200 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                            <option value="" data-i18n="filter.allCategories">All Categories</option>
+                        </select>
+                        <select id="priorityFilter" class="text-sm px-3 py-2 border border-gray-200 dark:border-gray-500 rounded-lg bg-white dark:bg-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all">
+                            <option value="" data-i18n="filter.allPriorities">All Priorities</option>
+                        </select>
+                    </div>
+                    <button id="toggleCompletedBtn" class="filter-btn inline-flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500 transition-colors space-x-2">
+                        <iconify-icon icon="mdi:check-circle" class="text-sm"></iconify-icon>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <main class="flex-1 px-4 pb-4 space-y-3 overflow-y-auto">
+            <div id="taskList" class="space-y-3">
+                <!-- Tasks will be rendered here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 p-8">
+                    <iconify-icon icon="mdi:clipboard-check-multiple-outline" class="text-5xl mb-4 text-gray-400 dark:text-gray-500"></iconify-icon>
+                    <p class="font-medium text-lg text-gray-600 dark:text-gray-400" data-i18n="task.noTasks">No tasks yet. Add your first task!</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modern Floating Action Button -->
+    <button id="addTaskBtn" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all transform hover:scale-105 z-40" data-i18n-title="task.addNew">
+        <iconify-icon icon="mdi:plus" class="text-2xl"></iconify-icon>
+    </button>
+
+    <!-- Modern Modal Template -->
+    <div id="modal-template" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 transform transition-transform duration-300 scale-95">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="modal-title text-lg font-semibold text-gray-900 dark:text-white">Modal Title</h2>
+                <button class="modal-close text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
+                </button>
+            </div>
+            <div class="modal-body space-y-4 max-h-96 overflow-y-auto">
+                <!-- Modal content goes here -->
+            </div>
+            <div class="modal-footer pt-4 border-t border-gray-200 dark:border-gray-600 mt-4">
+                <!-- Modal buttons go here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Notification Container -->
+    <div id="notification-container" class="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 max-w-sm"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3/dist/lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@3/dist/iconify-icon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+
+    <script src="js/storage.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

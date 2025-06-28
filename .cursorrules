@@ -1,0 +1,171 @@
+# .cursorrules – Linee Guida Generiche per UI/UX Moderne
+
+## Stack Tecnologico
+
+- Utilizza **HTML5** per la struttura semantica e accessibile.
+- Applica **Tailwind CSS** per tutto lo styling, sfruttando le utility class per rapidità e coerenza.
+- Gestisci le interazioni dinamiche e il DOM con **jQuery**.
+- Per tutte le icone, usa **Iconify** (iconify.design), integrando le icone tramite CDN.
+- **Tutti gli asset** (CSS, JS, icone) devono essere caricati esclusivamente da **jsdelivr.net**.
+
+---
+
+## Principi di Design
+
+- Stile **moderno, minimalista e funzionale**: privilegia la chiarezza visiva e la semplicità.
+- **Palette colori**: sfondi chiari (bianco o grigio chiaro), accenti vivaci per azioni primarie e badge, testo scuro per massima leggibilità.
+- **Tipografia**: font sans-serif moderno (es. Inter, SF Pro, Roboto), titoli evidenti, testo secondario più leggero.
+- **Spaziatura generosa**: padding e margin ampi per separare visivamente i contenuti.
+- **Bordi arrotondati** e **ombre leggere** per card, modali e pulsanti.
+- **Contrasto elevato** e attenzione all’accessibilità (focus visibili, aria-labels, dimensioni touch-friendly).
+
+---
+
+## Componenti UI – Esempi e Best Practice
+
+### Header/Toolbar
+
+<pre>
+<header class="flex items-center justify-between p-4 bg-white shadow-sm border-b border-gray-100">
+  <div class="flex items-center space-x-2">
+    <iconify-icon icon="mdi:apps" class="text-2xl text-blue-600"></iconify-icon>
+    <h1 class="text-xl font-bold text-gray-900">Nome App</h1>
+  </div>
+  <button class="p-2 text-gray-500 hover:text-gray-700">
+    <iconify-icon icon="mdi:filter-variant"></iconify-icon>
+  </button>
+</header>
+</pre>
+
+---
+
+### Pulsanti
+
+- **Primario**: colore di accento (es. blu), testo bianco, bordi arrotondati, shadow minima.
+- **Secondario**: testo scuro su sfondo chiaro, bordo sottile.
+
+<pre>
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm flex items-center space-x-2">
+  <iconify-icon icon="mdi:plus"></iconify-icon>
+  <span>Azione Primaria</span>
+</button>
+</pre>
+
+---
+
+### Card/Box
+
+- Usa card per racchiudere contenuti o elementi interattivi.
+- Bordi arrotondati, shadow leggera, padding interno.
+
+<pre>
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow duration-200">
+  <h3 class="font-semibold text-gray-900 mb-2">Titolo Card</h3>
+  <p class="text-sm text-gray-600">Contenuto descrittivo...</p>
+</div>
+</pre>
+
+---
+
+### Badge/Tag
+
+- Badge colorati per categorie, status o priorità.
+- Usa cerchi pieni o rettangoli con colore di background e testo coerente.
+
+<pre>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-green-100 text-green-800 text-xs font-medium">
+  <iconify-icon icon="mdi:check-circle" class="text-green-500 mr-1"></iconify-icon>
+  Success
+</span>
+</pre>
+
+---
+
+### Modali
+
+- Centrati, overlay scuro trasparente, bordi arrotondati, shadow marcata.
+- Chiusura sempre visibile in alto a destra.
+
+<pre>
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold text-gray-900">Titolo Modale</h2>
+      <button class="text-gray-400 hover:text-gray-600">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+    </div>
+    <!-- Contenuto modale -->
+  </div>
+</div>
+</pre>
+
+---
+
+### Dropdown/Select Personalizzati
+
+- Dropdown con badge colorati e testo chiaro.
+- Evidenzia la selezione con background e bordo.
+
+<pre>
+<select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+  <option value="work">Work</option>
+  <option value="personal">Personal</option>
+  <option value="shopping">Shopping</option>
+</select>
+</pre>
+
+---
+
+### Toast/Notifiche
+
+- Posizionati in basso a destra, bordo arrotondato, shadow, testo chiaro.
+- Colori diversi per success, error, warning.
+
+<pre>
+<div class="fixed bottom-4 right-4 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg shadow-lg flex items-center space-x-2">
+  <iconify-icon icon="mdi:check-circle" class="text-green-600"></iconify-icon>
+  <span class="font-medium">Success</span>
+  <span>Azione completata con successo</span>
+</div>
+</pre>
+
+---
+
+## Interazioni & UX
+
+- Tutte le interazioni DOM devono essere gestite con **jQuery**.
+- Feedback visivo immediato per ogni azione (es. toast, highlight, aggiornamento UI).
+- Micro-interazioni fluide: transizioni hover (150ms), apertura modali (300ms).
+- Responsive design mobile-first con classi Tailwind (`md:`, `lg:`).
+- Elementi interattivi di dimensioni minime 44px per accessibilità touch.
+- Focus visibile per la navigazione da tastiera.
+
+---
+
+## Convenzioni di Codice
+
+- **HTML**: sempre semantico e accessibile.
+- **CSS**: solo Tailwind, niente CSS custom se non strettamente necessario.
+- **JS**: solo jQuery per manipolazioni DOM e logica interattiva.
+- **Icone**: sempre da Iconify, specificando l’icona tramite attributo `icon`.
+- **Asset**: importa sempre da jsdelivr.net.
+
+---
+
+## Esempio di Inclusione Asset
+
+<pre>
+<!-- Tailwind CSS -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3/dist/tailwind.min.css" rel="stylesheet">
+<!-- Iconify -->
+<script src="https://cdn.jsdelivr.net/npm/iconify-icon@1/dist/iconify-icon.min.js"></script>
+<!-- jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+</pre>
+
+---
+
+## Sintesi
+
+Segui queste linee guida per garantire uno stile UI/UX moderno, accessibile, adattabile e facilmente riutilizzabile in qualsiasi tipo di applicazione web. Gli esempi forniti possono essere adattati a seconda del dominio applicativo, mantenendo sempre coerenza, chiarezza e un’esperienza utente fluida e professionale.

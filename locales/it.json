@@ -1,0 +1,95 @@
+{
+  "app": {
+    "title": "TaskToGo"
+  },
+  "task": {
+    "title": "Titolo",
+    "description": "Descrizione",
+    "category": "Categoria",
+    "priority": "Priorità",
+    "dueDate": "Scadenza",
+    "quickAdd": "Aggiungi task velocemente...",
+    "addNew": "Aggiungi Task",
+    "editTask": "Modifica Task",
+    "noTasks": "Nessun task ancora. Aggiungi il tuo primo task!",
+    "showCompleted": "Mostra Completati",
+    "hideCompleted": "Nascondi Completati",
+    "markComplete": "Segna come completato",
+    "markIncomplete": "Segna come incompleto",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "completed": "Completato",
+    "pending": "In sospeso",
+    "overdue": "Scaduto",
+    "dueToday": "Scade oggi",
+    "dueTomorrow": "Scade domani"
+  },
+  "category": {
+    "name": "Nome categoria",
+    "manage": "Gestisci Categorie",
+    "add": "Aggiungi Categoria",
+    "edit": "Modifica Categoria",
+    "delete": "Elimina Categoria",
+    "confirmDelete": "Sei sicuro di voler eliminare questa categoria? I task in questa categoria verranno spostati in 'Senza categoria'."
+  },
+  "priority": {
+    "name": "Nome priorità",
+    "manage": "Gestisci Priorità",
+    "add": "Aggiungi Priorità",
+    "edit": "Modifica Priorità",
+    "delete": "Elimina Priorità",
+    "confirmDelete": "Sei sicuro di voler eliminare questa priorità? I task con questa priorità verranno impostati su 'Normale'.",
+    "high": "Alta",
+    "medium": "Media",
+    "low": "Bassa",
+    "normal": "Normale"
+  },
+  "filter": {
+    "allCategories": "Tutte le Categorie",
+    "allPriorities": "Tutte le Priorità",
+    "completed": "Completati",
+    "pending": "In sospeso",
+    "overdue": "Scaduti"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "language": "Lingua",
+    "theme": "Tema",
+    "themeOptions": {
+        "light": "Chiaro",
+        "dark": "Scuro",
+        "system": "Sistema"
+    },
+    "export": "Esporta Dati",
+    "import": "Importa Dati",
+    "reset": "Reimposta Tutti i Dati"
+  },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "yes": "Sì",
+    "no": "No",
+    "confirm": "Conferma",
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "warning": "Attenzione"
+  },
+  "messages": {
+    "taskAdded": "Task aggiunto con successo",
+    "taskUpdated": "Task aggiornato con successo",
+    "taskDeleted": "Task eliminato con successo",
+    "categoryAdded": "Categoria aggiunta con successo",
+    "categoryUpdated": "Categoria aggiornata con successo",
+    "categoryDeleted": "Categoria eliminata con successo",
+    "priorityAdded": "Priorità aggiunta con successo",
+    "priorityUpdated": "Priorità aggiornata con successo",
+    "priorityDeleted": "Priorità eliminata con successo",
+    "fillRequired": "Compila tutti i campi obbligatori",
+    "confirmDeleteTask": "Sei sicuro di voler eliminare questo task?"
+  }
+}

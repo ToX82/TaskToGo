@@ -1,0 +1,95 @@
+{
+  "app": {
+    "title": "TaskToGo"
+  },
+  "task": {
+    "title": "Title",
+    "description": "Description",
+    "category": "Category",
+    "priority": "Priority",
+    "dueDate": "Due Date",
+    "quickAdd": "Quick add task...",
+    "addNew": "Add Task",
+    "editTask": "Edit Task",
+    "noTasks": "No tasks yet. Add your first task!",
+    "showCompleted": "Show Completed",
+    "hideCompleted": "Hide Completed",
+    "markComplete": "Mark as complete",
+    "markIncomplete": "Mark as incomplete",
+    "edit": "Edit",
+    "delete": "Delete",
+    "completed": "Completed",
+    "pending": "Pending",
+    "overdue": "Overdue",
+    "dueToday": "Due today",
+    "dueTomorrow": "Due tomorrow"
+  },
+  "category": {
+    "name": "Category name",
+    "manage": "Manage Categories",
+    "add": "Add Category",
+    "edit": "Edit Category",
+    "delete": "Delete Category",
+    "confirmDelete": "Are you sure you want to delete this category? Tasks in this category will be moved to 'Uncategorized'."
+  },
+  "priority": {
+    "name": "Priority name",
+    "manage": "Manage Priorities",
+    "add": "Add Priority",
+    "edit": "Edit Priority",
+    "delete": "Delete Priority",
+    "confirmDelete": "Are you sure you want to delete this priority? Tasks with this priority will be set to 'Normal'.",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low",
+    "normal": "Normal"
+  },
+  "filter": {
+    "allCategories": "All Categories",
+    "allPriorities": "All Priorities",
+    "completed": "Completed",
+    "pending": "Pending",
+    "overdue": "Overdue"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themeOptions": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    },
+    "export": "Export Data",
+    "import": "Import Data",
+    "reset": "Reset All Data"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning"
+  },
+  "messages": {
+    "taskAdded": "Task added successfully",
+    "taskUpdated": "Task updated successfully",
+    "taskDeleted": "Task deleted successfully",
+    "categoryAdded": "Category added successfully",
+    "categoryUpdated": "Category updated successfully",
+    "categoryDeleted": "Category deleted successfully",
+    "priorityAdded": "Priority added successfully",
+    "priorityUpdated": "Priority updated successfully",
+    "priorityDeleted": "Priority deleted successfully",
+    "fillRequired": "Please fill in all required fields",
+    "confirmDeleteTask": "Are you sure you want to delete this task?"
+  }
+}
