@@ -23,7 +23,14 @@
     <meta name="msapplication-TileImage" content="img/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configurazione Tailwind per abilitare il dark mode via classe
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     <link rel="stylesheet" href="css/styles.css">
     <script>
         // Immediately set theme from localStorage to prevent FOUC

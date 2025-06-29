@@ -245,7 +245,7 @@ class UI {
 
         // Compact category badge
         const categoryBadge = category ?
-            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white" style="background-color: ${category.color}">
+            `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium text-white ring-1 ring-white/20 dark:ring-black/20" style="background-color: ${category.color}">
                 <iconify-icon icon="mdi:tag-outline" class="text-xs mr-0.5"></iconify-icon>
                 ${utils.escapeHtml(category.name)}
             </span>` : '';
@@ -762,7 +762,7 @@ class UI {
         const listHtml = categories.map(c => `
             <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
                 <div class="flex items-center gap-3">
-                    <span class="w-5 h-5 rounded-full border" style="background-color: ${c.color};"></span>
+                    <span class="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-500 ring-1 ring-white/20 dark:ring-black/20" style="background-color: ${c.color};"></span>
                     <span class="font-medium text-gray-800 dark:text-gray-100">${utils.escapeHtml(c.name)}</span>
                 </div>
                 <div class="flex items-center gap-1">
@@ -878,7 +878,7 @@ class UI {
         const listHtml = priorities.map(p => `
             <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-600 rounded-lg p-3">
                 <div class="flex items-center gap-3">
-                    <span class="w-5 h-5 rounded-full border" style="background-color: ${p.color};"></span>
+                    <span class="w-5 h-5 rounded-full border border-gray-200 dark:border-gray-500 ring-1 ring-white/20 dark:ring-black/20" style="background-color: ${p.color};"></span>
                     <span class="font-medium text-gray-800 dark:text-gray-100">${utils.escapeHtml(p.name)}</span>
                     <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">#${p.order}</span>
                 </div>

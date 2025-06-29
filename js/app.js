@@ -98,13 +98,13 @@ class App {
      */
     showErrorMessage(message) {
         const $errorDiv = $(`
-            <div class="fixed top-4 left-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50">
+            <div class="fixed top-4 left-4 right-4 bg-red-500 dark:bg-red-700 text-white p-4 rounded-lg shadow-lg z-50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <iconify-icon icon="mdi:alert-circle" class="text-xl"></iconify-icon>
                         <span>${message}</span>
                     </div>
-                    <button class="ml-4 hover:bg-red-600 p-1 rounded">
+                    <button class="ml-4 hover:bg-red-600 dark:hover:bg-red-800 p-1 rounded">
                         <iconify-icon icon="mdi:close" class="text-lg"></iconify-icon>
                     </button>
                 </div>
